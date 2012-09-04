@@ -1,0 +1,18 @@
+[{
+  "id":    null,
+  "name":  null,
+  "type":  "/computer/programming_language",
+  "limit": 2000,
+  "language_paradigms": [{
+    "id":       null,
+    "limit":    100,
+    "name":     null,
+    "optional": true,
+    "type":     "/computer/programming_language_paradigm"
+  }],
+  "influenced": [{
+    "id":       null,
+    "name":     null,
+    "optional": true
+  }]
+}]
