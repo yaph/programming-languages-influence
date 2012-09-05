@@ -1,6 +1,10 @@
 $(function(){
-  var defaultColor = '#fff';
-  var nodesbyid = {}
+  var defaultColor = '#eee';
+  var srcColor = '#67A9CF';
+  var dstColor = '#EF8A62';
+  var nodesbyid = {};
+  var paradigms = {};
+
   var sig = sigma.init(document.getElementById('sig')).drawingProperties({
     defaultLabelColor: defaultColor,
     defaultLabelSize: 14,
@@ -17,35 +21,42 @@ $(function(){
     maxRatio: 32
   });
 
+  var nodeColor = function(cnt) {
+    var color = '#EDF8E9';
+    if (cnt > 40) color = '#006D2C';
+    else if (cnt > 30) color = '#31A354';
+    else if (cnt > 20) color = '#74C476';
+    else if (cnt > 0) color = '#BAE4B3';
+    return color;
+  };
+
   var addNode = function(node) {
     var nid = node['id'];
+    var icnt = node.influenced.length;
     nodesbyid[nid] = true;
     sig.addNode(nid, {
       x: Math.random(),
       y: Math.random(),
-      size: node.influenced.length,
-      color: '#fff',
-      label: node.name,
+      size: icnt,
+      color: nodeColor(icnt),
+      label: node.label,
       id: nid,
       influenced: node.influenced
     });
   };
 
-  $.getJSON('langs.json', function(data) {
-    $.each(data.result, function(key, src) {
-      addNode(src);
-    });
 
+  $.getJSON('data.json', function(data) {
+    $.each(data.langs, function(idx, node) {
+      addNode(node);
+    });
     sig.iterNodes(function(n){
-      $.each(n.attr.influenced, function(key, dst) {
+      $.each(n.attr.influenced, function(idx, dst) {
         if (nodesbyid[n.id] && nodesbyid[dst.id]) {
           sig.addEdge(n.id + dst.id, n.id, dst.id);
         }
       });
     });
-
-    var srcColor = '#67A9CF';
-    var dstColor = '#EF8A62';
 
     // events
     sig.bind('overnodes',function(event){
@@ -54,6 +65,7 @@ $(function(){
       var influenced = {};
       var influencedby = {};
       sig.iterEdges(function(e){
+        e.defaultColor = e.color;
         if (e.source == hnode.id) {
           e.color = srcColor;
           influenced[e.target] = true;
@@ -78,13 +90,13 @@ $(function(){
       }).draw(2,2,2);
     }).bind('outnodes',function(event){
       var nodes = event.content;
-      sig.iterEdges(function(e){
-        e.color = defaultColor;
-        e.hidden = 0;
-      }).iterNodes(function(n){
-        n.color = defaultColor;
+      sig.iterNodes(function(n){
+        n.color = nodeColor(n.attr.influenced.length);
         n.hidden = 0;
         n.forceLabel = false;
+      }).iterEdges(function(e){
+        e.hidden = 0;
+        e.color = e.defaultColor;
       }).draw(2,2,2);
     });
 
