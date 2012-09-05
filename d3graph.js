@@ -6,7 +6,7 @@ var svg = d3.select('body').append('svg')
     .attr('height', height);
 
 var force = d3.layout.force()
-    .gravity(.05)
+    .gravity(.3)
     .distance(100)
     .charge(-100)
     .size([width, height]);
@@ -30,14 +30,12 @@ d3.json('langs.json', function(json) {
   var langs = {};
   json.result.map(function(l){
     if (l.influenced.length >= 0) {
-console.log(l);
       nodes.push(l);
       langs[l['id']] = nodes.length - 1;
     }
   });
 
   nodes.map(function(n){
-//    links.push({'source': n.index, 'target': langs[n.id]});
     n.influenced.map(function(l){
       if ('undefined' !== typeof langs[l.id])
         links.push({'source': langs[n.id], 'target': langs[l.id]});
@@ -52,11 +50,6 @@ console.log(l);
       .nodes(nodes)
       .links(links)
       .start();
-
-//  var link = svg.selectAll('.link')
-//      .data(links)
-//    .enter().append('line')
-//      .attr('class', 'link');
 
   var path = svg.append('svg:g').selectAll('path')
     .data(links)
@@ -82,11 +75,6 @@ console.log(l);
     node.call(force.drag);
 
   force.on('tick', function() {
-//    link.attr('x1', function(d) { return d.source.x; })
-//        .attr('y1', function(d) { return d.source.y; })
-//        .attr('x2', function(d) { return d.target.x; })
-//        .attr('y2', function(d) { return d.target.y; });
-
     path.attr('d', function(d) {
       var dx = d.target.x - d.source.x,
           dy = d.target.y - d.source.y,
