@@ -4,6 +4,10 @@ $(function(){
   var pmenu = $('#paradigms');
   var graphdata = null;
   langs.init('sig');
+  $('.showhelp').click(function(e){
+    e.preventDefault();
+    $('#help').modal();
+  });
   pmenu.click(function(e){
     e.preventDefault();
     if ('a' == e.target.nodeName.toLowerCase()) {
