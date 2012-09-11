@@ -20,7 +20,7 @@ for index, lang in enumerate(res):
         name = i['name']
         paras.append({'id': pid, 'name': name})
         if pid not in paradigms:
-            paradigms[pid] = {'count': 0, 'name': name, 'id': pid}
+            paradigms[pid] = {'count': 1, 'name': name, 'id': pid}
         else:
             paradigms[pid]['count'] += 1
 
