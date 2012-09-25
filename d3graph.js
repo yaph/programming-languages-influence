@@ -1,18 +1,19 @@
 var width = 1200,
-    height = 900;
+    height = 900,
+    rscale = function(n) { return (n / 3 || 1); };
 
 var svg = d3.select('body').append('svg')
-    .attr('width', width)
-    .attr('height', height);
+  .attr('width', width)
+  .attr('height', height);
 
 var force = d3.layout.force()
-    .gravity(.3)
-    .distance(100)
-    .charge(-100)
-    .size([width, height]);
+  .gravity(.3)
+  .distance(200)
+  .charge(-100)
+  .size([width, height]);
 
 svg.append('svg:defs').selectAll('marker')
-    .data(['influenced'])
+  .data(['influenced'])
   .enter().append('svg:marker')
     .attr('id', String)
     .attr('viewBox', '0 -5 10 10')
@@ -24,11 +25,11 @@ svg.append('svg:defs').selectAll('marker')
   .append('svg:path')
     .attr('d', 'M0,-5L10,0L0,5');
 
-d3.json('langs.json', function(json) {
+d3.json('data.json', function(json) {
   var nodes = [];
   var links = [];
   var langs = {};
-  json.result.map(function(l){
+  json.langs.map(function(l){
     if (l.influenced.length >= 0) {
       nodes.push(l);
       langs[l['id']] = nodes.length - 1;
@@ -42,14 +43,10 @@ d3.json('langs.json', function(json) {
     });
   });
 
-  var rscale = function(n) {
-    return (n / 2 || 1);
-  };
-
   force
-      .nodes(nodes)
-      .links(links)
-      .start();
+    .nodes(nodes)
+    .links(links)
+    .start();
 
   var path = svg.append('svg:g').selectAll('path')
     .data(links)
@@ -63,16 +60,14 @@ d3.json('langs.json', function(json) {
       .attr('class', 'node')
       .call(force.drag);
 
-    node.append('circle')
-        .attr('r', function(d) { return rscale(d.influenced.length) });
+  node.append('circle')
+    .attr('r', function(d) { return rscale(d.influenced.length) });
 
-    node.append('text')
-      .attr('dx', function(d) { return rscale(d.influenced.length) })
-      .attr('dy', '.35em')
-      .attr('style', function(d) { return 'font-size:' + rscale(d.influenced.length) + 'px'; })
-      .text(function(d) { return d.name });
-
-    node.call(force.drag);
+  node.append('text')
+    .attr('dx', function(d) { return rscale(d.influenced.length) })
+    .attr('dy', '.35em')
+    .attr('style', function(d) { return 'font-size:' + rscale(d.influenced.length) + 'px'; })
+    .text(function(d) { return d.label });
 
   force.on('tick', function() {
     path.attr('d', function(d) {
