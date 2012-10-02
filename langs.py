@@ -2,10 +2,13 @@
 # Get programming languages data from freebase and save in json format 
 # appropriate for generating a network graph with sigma.js.
 import requests, requests_cache, json
+import networkx as nx
 
 requests_cache.configure('freebase')
 langs = []
 paradigms = {}
+plin = 'Programming Languages Influence Network'
+graph_file = 'plin.gexf'
 
 with open('query.json') as f:
     query = f.read()
@@ -40,3 +43,13 @@ data = {
 
 with open('data.json', 'w') as f:
     json.dump(data, f)
+
+# create graph and save to file
+G = nx.DiGraph()
+for index, l in enumerate(langs):
+    G.add_node(l['label'], dict([(p['id'], p['name']) for p in l['paradigms']]))
+    for i in l['influenced']:
+        G.add_edge(l['label'], i['name'])
+
+nx.write_gexf(G, graph_file)
+
