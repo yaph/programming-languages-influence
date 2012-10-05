@@ -31,6 +31,7 @@ for index, lang in enumerate(res):
         'index': index,
         'size': len(lang['influenced']),
         'influenced': [{'id': i['id'], 'name': i['name']} for i in lang['influenced']],
+        'influencedby': [{'id': i['id'], 'name': i['name']} for i in lang['influenced_by']],
         'paradigms': paras,
         'id': lang['id'],
         'label': lang['name']
@@ -47,9 +48,16 @@ with open('data.json', 'w') as f:
 # create graph and save to file
 G = nx.DiGraph()
 for index, l in enumerate(langs):
-    G.add_node(l['label'], dict([(p['id'], p['name']) for p in l['paradigms']]))
+    attr = {}
+    attr['label'] = l['label']
+    if l['paradigms']:
+        attr['paradigms'] = '|'.join([p['name'] for p in l['paradigms']])
+    if l['influenced']:
+        attr['influenced'] = '|'.join([p['name'] for p in l['influenced']])
+    if l['influencedby']:
+        attr['influencedby'] = '|'.join([p['name'] for p in l['influencedby']])
+    G.add_node(l['id'], attr)
     for i in l['influenced']:
-        G.add_edge(l['label'], i['name'])
+        G.add_edge(l['id'], i['id'])
 
-nx.write_gexf(G, graph_file)
-
+nx.write_gexf(G, graph_file, version='1.2draft')
