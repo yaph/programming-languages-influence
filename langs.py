@@ -30,9 +30,9 @@ for index, lang in enumerate(res):
     langs.append({
         'index': index,
         'size': len(lang['influenced']),
-        'influenced': [{'id': i['id'], 'name': i['name']} for i in lang['influenced']],
-        'influencedby': [{'id': i['id'], 'name': i['name']} for i in lang['influenced_by']],
-        'paradigms': paras,
+        'influenced': [{'id': i['id'], 'name': i['name']} for i in sorted(lang['influenced'], key=lambda x: x['name'])],
+        'influencedby': [{'id': i['id'], 'name': i['name']} for i in sorted(lang['influenced_by'], key=lambda x: x['name'])],
+        'paradigms': [i for i in sorted(paras, key=lambda x: x['name'])],
         'id': lang['id'],
         'label': lang['name']
     })
