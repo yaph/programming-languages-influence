@@ -1,5 +1,9 @@
 # Programming Languages Influence
 
+**Update:** For a current version of the network, that is updated monthly and based on Wikidata, check out https://programminglanguages.info/influence-network/
+
+---
+
 This code retrieves data about programming languages from [Freebase's](http://www.freebase.com/) mqlread service and was used to create the following network visualizations:
 
 * [Programming Languages Influence Network 2014 - Sigma.js](http://exploringdata.github.com/vis/programming-languages-influence-network-2014/)
